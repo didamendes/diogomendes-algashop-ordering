@@ -1,0 +1,25 @@
+package com.diogomendes.algashop.ordering.domain.validator;
+
+import static java.util.Objects.requireNonNull;
+import static org.apache.commons.validator.routines.EmailValidator.getInstance;
+
+public class FieldValidations {
+
+    private FieldValidations() {}
+
+    public static void requiredValidEmail(String email) {
+        requiredValidEmail(email, null);
+    }
+
+    public static void requiredValidEmail(String email, String errorMessage) {
+        requireNonNull(email, errorMessage);
+
+        if (email.isBlank()) {
+            throw new IllegalArgumentException(errorMessage);
+        }
+        if (!getInstance().isValid(email)) {
+            throw new IllegalArgumentException(email);
+        }
+    }
+
+}
