@@ -1,4 +1,4 @@
-package com.diogomendes.algashop.ordering.domain.valueobject;
+package com.diogomendes.algashop.ordering.domain.valueobject.id;
 
 import java.util.UUID;
 

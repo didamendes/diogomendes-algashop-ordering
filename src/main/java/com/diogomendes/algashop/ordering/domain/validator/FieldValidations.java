@@ -7,6 +7,18 @@ public class FieldValidations {
 
     private FieldValidations() {}
 
+    public static void requireNonBlank(String value) {
+        requireNonBlank(value, "");
+    }
+
+    public static void requireNonBlank(String value, String errorMessage) {
+        requireNonNull(value);
+
+        if (value.isBlank()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public static void requiredValidEmail(String email) {
         requiredValidEmail(email, null);
     }
