@@ -34,8 +34,41 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.assertj:assertj-core:3.27.3'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.h2database:h2'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+test {
+    filter {
+        excludeTestsMatching("*IT")
+    }
+}
+
+tasks.named('check') {
+    dependsOn(test, integrationTest)
+}
+
+tasks.register('integrationTest', Test) {
+    description = 'Run integration tests.'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    shouldRunAfter test
+
+    useJUnitPlatform()
+
+    testLogging {
+        events "passed"
+    }
+
+    filter {
+        includeTestsMatching "*IT"
+        excludeTestsMatching "*Test"
+    }
 }
