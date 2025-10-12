@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
 @DataJpaTest
@@ -29,13 +30,17 @@ class OrderPersistenceEntityRepositoryIT {
         OrderPersistenceEntity entity = OrderPersistenceEntityTestDataBuilder.existingOrder().build();
 
         orderPersistenceEntityRepository.saveAndFlush(entity);
-        Assertions.assertThat(orderPersistenceEntityRepository.existsById(entity.getId())).isTrue();
+        assertThat(orderPersistenceEntityRepository.existsById(entity.getId())).isTrue();
+
+        OrderPersistenceEntity savedEntity = orderPersistenceEntityRepository.findById(entity.getId()).orElseThrow();
+
+        assertThat(savedEntity.getItems()).isNotEmpty();
     }
 
     @Test
     public void shouldCount() {
         long ordersCount = orderPersistenceEntityRepository.count();
-        Assertions.assertThat(ordersCount).isZero();
+        assertThat(ordersCount).isZero();
     }
 
     @Test
@@ -43,10 +48,10 @@ class OrderPersistenceEntityRepositoryIT {
         OrderPersistenceEntity entity = OrderPersistenceEntityTestDataBuilder.existingOrder().build();
         entity = orderPersistenceEntityRepository.saveAndFlush(entity);
 
-        Assertions.assertThat(entity.getCreatedByUserId()).isNotNull();
+        assertThat(entity.getCreatedByUserId()).isNotNull();
 
-        Assertions.assertThat(entity.getLastModifiedAt()).isNotNull();
-        Assertions.assertThat(entity.getLastModifiedByUserId()).isNotNull();
+        assertThat(entity.getLastModifiedAt()).isNotNull();
+        assertThat(entity.getLastModifiedByUserId()).isNotNull();
     }
 
 }
