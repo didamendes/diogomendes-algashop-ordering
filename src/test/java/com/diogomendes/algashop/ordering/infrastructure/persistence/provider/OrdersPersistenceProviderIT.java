@@ -11,9 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.Transactional;
+import static org.assertj.core.api.Assertions.*;
 
 import static com.diogomendes.algashop.ordering.domain.model.entity.OrderStatus.PLACED;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
 @DataJpaTest
 @Import({
@@ -59,6 +61,17 @@ class OrdersPersistenceProviderIT {
         assertThat(persistenceEntity.getLastModifiedAt()).isNotNull();
         assertThat(persistenceEntity.getLastModifiedByUserId()).isNotNull();
 
+    }
+
+    @Test
+    @Transactional(propagation = NOT_SUPPORTED)
+    public void shouldAddFindAndNotFailWhenNoTransaction() {
+        Order order = OrderTestDataBuilder.anOrder().build();
+        persistenceProvider.add(order);
+
+        Order savedOrder = persistenceProvider.ofId(order.id()).orElseThrow();
+
+        assertThat(savedOrder).isNotNull();
     }
 
 }
