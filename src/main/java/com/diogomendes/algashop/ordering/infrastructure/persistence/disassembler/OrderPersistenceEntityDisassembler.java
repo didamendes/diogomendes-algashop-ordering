@@ -17,7 +17,6 @@ import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.Order
 import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 

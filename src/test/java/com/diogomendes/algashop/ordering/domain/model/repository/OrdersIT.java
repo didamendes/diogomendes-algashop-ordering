@@ -1,40 +1,66 @@
 package com.diogomendes.algashop.ordering.domain.model.repository;
 
+import com.diogomendes.algashop.ordering.domain.model.entity.CustomerTestDataBuilder;
 import com.diogomendes.algashop.ordering.domain.model.entity.Order;
 import com.diogomendes.algashop.ordering.domain.model.entity.OrderTestDataBuilder;
+import com.diogomendes.algashop.ordering.domain.model.valueobject.Money;
+import com.diogomendes.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.diogomendes.algashop.ordering.domain.model.valueobject.id.OrderId;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.assembler.CustomerPersistenceEntityAssembler;
 import com.diogomendes.algashop.ordering.infrastructure.persistence.assembler.OrderPersistenceEntityAssembler;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.disassembler.CustomerPersistenceEntityDisassembler;
 import com.diogomendes.algashop.ordering.infrastructure.persistence.disassembler.OrderPersistenceEntityDisassembler;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.provider.CustomersPersistenceProvider;
 import com.diogomendes.algashop.ordering.infrastructure.persistence.provider.OrdersPersistenceProvider;
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
+import java.time.Year;
+import java.util.List;
 import java.util.Optional;
 
-import static com.diogomendes.algashop.ordering.domain.model.entity.OrderStatus.PLACED;
+import static com.diogomendes.algashop.ordering.domain.model.entity.CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
+import static com.diogomendes.algashop.ordering.domain.model.entity.CustomerTestDataBuilder.existingCustomer;
+import static com.diogomendes.algashop.ordering.domain.model.entity.OrderStatus.*;
+import static com.diogomendes.algashop.ordering.domain.model.entity.OrderTestDataBuilder.anOrder;
+import static com.diogomendes.algashop.ordering.domain.model.valueobject.Money.ZERO;
+import static java.time.Year.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @DataJpaTest
 @Import({OrdersPersistenceProvider.class,
         OrderPersistenceEntityAssembler.class,
-        OrderPersistenceEntityDisassembler.class})
+        OrderPersistenceEntityDisassembler.class,
+        CustomersPersistenceProvider.class,
+        CustomerPersistenceEntityAssembler.class,
+        CustomerPersistenceEntityDisassembler.class
+})
 class OrdersIT {
 
     private Orders orders;
+    private Customers customers;
 
     @Autowired
-    public OrdersIT(Orders orders) {
+    public OrdersIT(Orders orders, Customers customers) {
         this.orders = orders;
+        this.customers = customers;
+    }
+
+    @BeforeEach
+    public void setup() {
+        if (!customers.exists(DEFAULT_CUSTOMER_ID)) {
+            customers.add(existingCustomer().build());
+        }
     }
 
     @Test
     public void shouldPersistAndFind() {
-        Order originalOrder = OrderTestDataBuilder.anOrder().build();
+        Order originalOrder = anOrder().build();
         OrderId orderId = originalOrder.id();
         orders.add(originalOrder);
 
@@ -60,7 +86,7 @@ class OrdersIT {
 
     @Test
     public void shouldUpdateExistingOrder() {
-        Order order = OrderTestDataBuilder.anOrder().status(PLACED).build();
+        Order order = anOrder().status(PLACED).build();
         orders.add(order);
 
         order = orders.ofId(order.id()).orElseThrow();
@@ -75,7 +101,7 @@ class OrdersIT {
 
     @Test
     public void shouldNotAllowStaleUpdates() {
-        Order order = OrderTestDataBuilder.anOrder().status(PLACED).build();
+        Order order = anOrder().status(PLACED).build();
         orders.add(order);
 
         Order orderT1 = orders.ofId(order.id()).orElseThrow();
@@ -100,8 +126,8 @@ class OrdersIT {
     public void shouldCountExistingOrders() {
         assertThat(orders.count()).isZero();
 
-        Order order1 = OrderTestDataBuilder.anOrder().build();
-        Order order2 = OrderTestDataBuilder.anOrder().build();
+        Order order1 = anOrder().build();
+        Order order2 = anOrder().build();
 
         orders.add(order1);
         orders.add(order2);
@@ -111,10 +137,86 @@ class OrdersIT {
 
     @Test
     public void shouldReturnIfOrderExists() {
-        Order order = OrderTestDataBuilder.anOrder().build();
+        Order order = anOrder().build();
         orders.add(order);
 
         assertThat(orders.exists(order.id())).isTrue();
         assertThat(orders.exists(new OrderId())).isFalse();
     }
+
+    @Test
+    public void shouldListExistingOrdersByYear() {
+        Order order1 = anOrder().status(PLACED).build();
+        Order order2 = anOrder().status(PLACED).build();
+        Order order3 = anOrder().status(CANCELED).build();
+        Order order4 = anOrder().status(DRAFT).build();
+
+        orders.add(order1);
+        orders.add(order2);
+        orders.add(order3);
+        orders.add(order4);
+
+        CustomerId customerId = DEFAULT_CUSTOMER_ID;
+
+        List<Order> listedOrders = orders.placedByCustomerInYear(customerId, now());
+
+        assertThat(listedOrders).isNotEmpty();
+        assertThat(listedOrders.size()).isEqualTo(2);
+
+        listedOrders = orders.placedByCustomerInYear(customerId, now().minusYears(1));
+
+        assertThat(listedOrders).isEmpty();
+
+        listedOrders = orders.placedByCustomerInYear(new CustomerId(), now());
+
+        assertThat(listedOrders).isEmpty();
+    }
+
+    @Test
+    public void shouldReturnTotalSoldByCustomer() {
+        Order order1 = anOrder().status(PAID).build();
+        Order order2 = anOrder().status(PAID).build();
+
+        orders.add(order1);
+        orders.add(order2);
+
+        orders.add(
+                anOrder().status(CANCELED).build()
+        );
+
+        orders.add(
+                anOrder().status(PLACED).build()
+        );
+
+        CustomerId customerId = DEFAULT_CUSTOMER_ID;
+        Money expectedTotalAmount = order1.totalAmount().add(order2.totalAmount());
+
+        assertThat(orders.totalSoldForCustomer(customerId)).isEqualTo(expectedTotalAmount);
+
+        assertThat(orders.totalSoldForCustomer(new CustomerId())).isEqualTo(ZERO);
+    }
+
+    @Test
+    public void shouldReturnSalesQuantityByCustomer() {
+        Order order1 = anOrder().status(PAID).build();
+        Order order2 = anOrder().status(PAID).build();
+
+        orders.add(order1);
+        orders.add(order2);
+
+        orders.add(
+                anOrder().status(CANCELED).build()
+        );
+
+        orders.add(
+                anOrder().status(PLACED).build()
+        );
+
+        CustomerId customerId = DEFAULT_CUSTOMER_ID;
+
+        assertThat(orders.salesQuantityByCustomerInYear(customerId, now())).isEqualTo(2L);
+        assertThat(orders.salesQuantityByCustomerInYear(customerId, now().minusYears(1))).isZero();
+
+    }
+
 }

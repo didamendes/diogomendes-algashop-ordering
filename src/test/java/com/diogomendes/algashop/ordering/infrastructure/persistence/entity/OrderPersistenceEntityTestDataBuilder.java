@@ -1,6 +1,5 @@
 package com.diogomendes.algashop.ordering.infrastructure.persistence.entity;
 
-import com.diogomendes.algashop.ordering.domain.model.utility.IdGenerator;
 import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity.OrderItemPersistenceEntityBuilder;
 import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity.OrderPersistenceEntityBuilder;
 
@@ -10,6 +9,7 @@ import java.util.Set;
 
 import static com.diogomendes.algashop.ordering.domain.model.utility.IdGenerator.generateTSID;
 import static com.diogomendes.algashop.ordering.domain.model.utility.IdGenerator.generateTimeBasedUUID;
+import static com.diogomendes.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder.aCustomer;
 
 public class OrderPersistenceEntityTestDataBuilder {
 
@@ -19,7 +19,7 @@ public class OrderPersistenceEntityTestDataBuilder {
     public static OrderPersistenceEntityBuilder existingOrder() {
         return OrderPersistenceEntity.builder()
                 .id(generateTSID().toLong())
-                .customerId(generateTimeBasedUUID())
+                .customer(aCustomer().build())
                 .totalItems(3)
                 .totalAmount(new BigDecimal(1250))
                 .status("DRAFT")

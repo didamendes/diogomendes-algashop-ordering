@@ -4,9 +4,11 @@ import com.diogomendes.algashop.ordering.domain.model.valueobject.Quantity;
 import com.diogomendes.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.diogomendes.algashop.ordering.domain.model.valueobject.id.ShoppingCartId;
 
+import static com.diogomendes.algashop.ordering.domain.model.entity.CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
+
 public class ShoppingCartTestDataBuilder {
 
-    public CustomerId customerId = new CustomerId();
+    public CustomerId customerId = DEFAULT_CUSTOMER_ID;
     public static final ShoppingCartId DEFAULT_SHOPPING_CART_ID = new ShoppingCartId();
     private boolean withItems = true;
 

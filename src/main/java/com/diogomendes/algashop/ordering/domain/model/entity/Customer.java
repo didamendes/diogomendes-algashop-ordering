@@ -25,6 +25,7 @@ public class Customer implements AggregateRoot<CustomerId> {
     private OffsetDateTime archivedAt;
     private LoyaltyPoints loyaltyPoints;
     private Address address;
+    private Long version;
 
     @Builder(builderClassName = "BrandNewCustomerBuilder", builderMethodName = "brandNew")
     private static Customer createBrandNew( FullName fullName, BirthDate birthDate, Email email, Phone phone,
@@ -40,14 +41,16 @@ public class Customer implements AggregateRoot<CustomerId> {
                 OffsetDateTime.now(),
                 null,
                 new LoyaltyPoints(0),
-                address);
+                address,
+                null
+                );
     }
 
     @Builder(builderClassName = "ExistingCustomerBuilder", builderMethodName = "existing")
     private Customer(CustomerId id, FullName fullName, BirthDate birthDate, Email email,
                     Phone phone, Document document, Boolean promotionNotificationsAllowed,
                     Boolean archived, OffsetDateTime registeredAt, OffsetDateTime archivedAt,
-                    LoyaltyPoints loyaltyPoints, Address address) {
+                    LoyaltyPoints loyaltyPoints, Address address, Long version) {
         this.setId(id);
         this.setFullName(fullName);
         this.setBirthDate(birthDate);
@@ -60,6 +63,7 @@ public class Customer implements AggregateRoot<CustomerId> {
         this.setArchivedAt(archivedAt);
         this.setLoyaltyPoints(loyaltyPoints);
         this.setAddress(address);
+        this.setVersion(version);
     }
 
     public void addLoyaltyPoints(LoyaltyPoints loayltyPointsAdded) {
@@ -158,6 +162,10 @@ public class Customer implements AggregateRoot<CustomerId> {
         return address;
     }
 
+    public Long version() {
+        return version;
+    }
+
     private void setId(CustomerId id) {
         requireNonNull(id);
         this.id = id;
@@ -217,6 +225,10 @@ public class Customer implements AggregateRoot<CustomerId> {
         if (this.archived()) {
             throw new CustomerArchivedException();
         }
+    }
+
+    private void setVersion(Long version) {
+        this.version = version;
     }
 
     @Override

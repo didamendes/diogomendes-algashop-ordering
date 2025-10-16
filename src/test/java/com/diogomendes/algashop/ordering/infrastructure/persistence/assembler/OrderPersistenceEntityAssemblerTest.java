@@ -3,20 +3,43 @@ package com.diogomendes.algashop.ordering.infrastructure.persistence.assembler;
 import com.diogomendes.algashop.ordering.domain.model.entity.Order;
 import com.diogomendes.algashop.ordering.domain.model.entity.OrderTestDataBuilder;
 import com.diogomendes.algashop.ordering.domain.model.valueobject.id.OrderItemId;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder;
 import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
 import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntityTestDataBuilder;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.repository.CustomerPersistenceEntityRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.diogomendes.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder.aCustomer;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class OrderPersistenceEntityAssemblerTest {
 
-    private final OrderPersistenceEntityAssembler assembler = new OrderPersistenceEntityAssembler();
+    @Mock
+    private CustomerPersistenceEntityRepository customerPersistenceEntityRepository;
+
+    @InjectMocks
+    private OrderPersistenceEntityAssembler assembler;
+
+    @BeforeEach
+    public void setup() {
+        when(customerPersistenceEntityRepository.getReferenceById(any(UUID.class)))
+                .then(((a) -> aCustomer().id(a.getArgument(0, UUID.class)).build()));
+    }
 
     @Test
     void shoudCConvertToDomain() {

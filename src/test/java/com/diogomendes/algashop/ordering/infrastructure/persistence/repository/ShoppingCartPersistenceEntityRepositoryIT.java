@@ -1,9 +1,13 @@
 package com.diogomendes.algashop.ordering.infrastructure.persistence.repository;
 
+
+import com.diogomendes.algashop.ordering.domain.model.entity.CustomerTestDataBuilder;
 import com.diogomendes.algashop.ordering.infrastructure.persistence.config.SpringDataAuditingConfig;
 import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntity;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntityTestDataBuilder;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.ShoppingCartPersistenceEntity;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.ShoppingCartPersistenceEntityTestDataBuilder;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,59 +19,62 @@ import java.util.UUID;
 
 import static com.diogomendes.algashop.ordering.domain.model.entity.CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
 import static com.diogomendes.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder.aCustomer;
+import static com.diogomendes.algashop.ordering.infrastructure.persistence.entity.ShoppingCartPersistenceEntityTestDataBuilder.existingShoppingCart;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = NONE)
 @Import(SpringDataAuditingConfig.class)
-class OrderPersistenceEntityRepositoryIT {
+class ShoppingCartPersistenceEntityRepositoryIT {
 
-    private final OrderPersistenceEntityRepository orderPersistenceEntityRepository;
+    private final ShoppingCartPersistenceEntityRepository shoppingCartPersistenceEntityRepository;
     private final CustomerPersistenceEntityRepository customerPersistenceEntityRepository;
 
     private CustomerPersistenceEntity customerPersistenceEntity;
 
     @Autowired
-    public OrderPersistenceEntityRepositoryIT(OrderPersistenceEntityRepository orderPersistenceEntityRepository, CustomerPersistenceEntityRepository customerPersistenceEntityRepository) {
-        this.orderPersistenceEntityRepository = orderPersistenceEntityRepository;
+    public ShoppingCartPersistenceEntityRepositoryIT(ShoppingCartPersistenceEntityRepository shoppingCartPersistenceEntityRepository,
+                                                     CustomerPersistenceEntityRepository customerPersistenceEntityRepository) {
+        this.shoppingCartPersistenceEntityRepository = shoppingCartPersistenceEntityRepository;
         this.customerPersistenceEntityRepository = customerPersistenceEntityRepository;
     }
 
     @BeforeEach
     public void setup() {
         UUID customerId = DEFAULT_CUSTOMER_ID.value();
-
         if (!customerPersistenceEntityRepository.existsById(customerId)) {
-            customerPersistenceEntity = customerPersistenceEntityRepository.saveAndFlush(aCustomer().build());
+            customerPersistenceEntity = customerPersistenceEntityRepository
+                    .saveAndFlush(aCustomer().build());
         }
-
     }
 
     @Test
     public void shouldPersist() {
-        OrderPersistenceEntity entity = OrderPersistenceEntityTestDataBuilder.existingOrder()
+        ShoppingCartPersistenceEntity entity = existingShoppingCart()
                 .customer(customerPersistenceEntity).build();
 
-        orderPersistenceEntityRepository.saveAndFlush(entity);
-        assertThat(orderPersistenceEntityRepository.existsById(entity.getId())).isTrue();
+        shoppingCartPersistenceEntityRepository.saveAndFlush(entity);
 
-        OrderPersistenceEntity savedEntity = orderPersistenceEntityRepository.findById(entity.getId()).orElseThrow();
+        assertThat(shoppingCartPersistenceEntityRepository.existsById(entity.getId())).isTrue();
+
+        ShoppingCartPersistenceEntity savedEntity = shoppingCartPersistenceEntityRepository
+                .findById(entity.getId()).orElseThrow();
 
         assertThat(savedEntity.getItems()).isNotEmpty();
     }
 
     @Test
     public void shouldCount() {
-        long ordersCount = orderPersistenceEntityRepository.count();
-        assertThat(ordersCount).isZero();
+        long shoppingCartsCount = shoppingCartPersistenceEntityRepository.count();
+        assertThat(shoppingCartsCount).isZero();
     }
 
     @Test
     public void shouldSetAuditingValues() {
-        OrderPersistenceEntity entity = OrderPersistenceEntityTestDataBuilder.existingOrder()
+        ShoppingCartPersistenceEntity entity = existingShoppingCart()
                 .customer(customerPersistenceEntity).build();
-        entity = orderPersistenceEntityRepository.saveAndFlush(entity);
+        entity = shoppingCartPersistenceEntityRepository.saveAndFlush(entity);
 
         assertThat(entity.getCreatedByUserId()).isNotNull();
 

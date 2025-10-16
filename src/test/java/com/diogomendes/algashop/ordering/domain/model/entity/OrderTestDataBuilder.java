@@ -5,9 +5,11 @@ import com.diogomendes.algashop.ordering.domain.model.valueobject.id.CustomerId;
 
 import java.time.LocalDate;
 
+import static com.diogomendes.algashop.ordering.domain.model.entity.CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
+
 public class OrderTestDataBuilder {
 
-    private CustomerId customerId = new CustomerId();
+    private CustomerId customerId = DEFAULT_CUSTOMER_ID;
 
     private PaymentMethod paymentMethod = PaymentMethod.GATEWAY_BALANCE;
 
@@ -58,6 +60,7 @@ public class OrderTestDataBuilder {
                 order.markAsReady();
             }
             case CANCELED -> {
+                order.cancel();
             }
         }
 
