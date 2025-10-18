@@ -1,3 +1,10 @@
 spring:
   profiles:
     active: test
+
+diogoshop:
+  integrations:
+    rapidex:
+      url: "http://localhost:8780"
+    shipping:
+      provider: "rapidex"

@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static com.diogomendes.algashop.ordering.domain.model.exception.ErrorMessages.*;
+import static com.diogomendes.algashop.ordering.domain.model.valueobject.LoyaltyPoints.ZERO;
 import static java.util.Objects.requireNonNull;
 
 public class Customer implements AggregateRoot<CustomerId> {
@@ -28,7 +29,7 @@ public class Customer implements AggregateRoot<CustomerId> {
     private Long version;
 
     @Builder(builderClassName = "BrandNewCustomerBuilder", builderMethodName = "brandNew")
-    private static Customer createBrandNew( FullName fullName, BirthDate birthDate, Email email, Phone phone,
+    private static Customer createBrandNew(FullName fullName, BirthDate birthDate, Email email, Phone phone,
                                     Document document, Boolean promotionNotificationsAllowed, Address address) {
         return  new Customer(new CustomerId(),
                 fullName,
@@ -66,9 +67,12 @@ public class Customer implements AggregateRoot<CustomerId> {
         this.setVersion(version);
     }
 
-    public void addLoyaltyPoints(LoyaltyPoints loayltyPointsAdded) {
+    public void addLoyaltyPoints(LoyaltyPoints loyaltyPointsAdded) {
         verifyIfChangeable();
-        this.setLoyaltyPoints(this.loyaltyPoints().add(loayltyPointsAdded));
+        if (loyaltyPointsAdded.equals(ZERO)) {
+            return;
+        }
+        this.setLoyaltyPoints(this.loyaltyPoints().add(loyaltyPointsAdded));
     }
 
     public void archive() {

@@ -14,3 +14,10 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: 'true'
+
+diogoshop:
+  integrations:
+    rapidex:
+      url: "http://localhost:8780"
+    shipping:
+      provider: "rapidex"
