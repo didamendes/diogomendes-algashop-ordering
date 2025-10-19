@@ -1,14 +1,16 @@
 package com.diogomendes.algashop.ordering.infrastructure.persistence.entity;
 
-import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity.OrderItemPersistenceEntityBuilder;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity.OrderPersistenceEntityBuilder;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.order.OrderItemPersistenceEntity;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.order.OrderItemPersistenceEntity.OrderItemPersistenceEntityBuilder;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntity;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntity.OrderPersistenceEntityBuilder;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Set;
 
-import static com.diogomendes.algashop.ordering.domain.model.utility.IdGenerator.generateTSID;
-import static com.diogomendes.algashop.ordering.domain.model.utility.IdGenerator.generateTimeBasedUUID;
+import static com.diogomendes.algashop.ordering.domain.model.IdGenerator.generateTSID;
+import static com.diogomendes.algashop.ordering.domain.model.IdGenerator.generateTimeBasedUUID;
 import static com.diogomendes.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder.aCustomer;
 
 public class OrderPersistenceEntityTestDataBuilder {

@@ -1,13 +1,11 @@
 package com.diogomendes.algashop.ordering.infrastructure.persistence.repository;
 
 
-import com.diogomendes.algashop.ordering.domain.model.entity.CustomerTestDataBuilder;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.config.SpringDataAuditingConfig;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntity;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.ShoppingCartPersistenceEntity;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.ShoppingCartPersistenceEntityTestDataBuilder;
-import org.assertj.core.api.Assertions;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.SpringDataAuditingConfig;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.customer.CustomerPersistenceEntity;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.customer.CustomerPersistenceEntityRepository;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.shoppingcart.ShoppingCartPersistenceEntity;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.shoppingcart.ShoppingCartPersistenceEntityRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +15,7 @@ import org.springframework.context.annotation.Import;
 
 import java.util.UUID;
 
-import static com.diogomendes.algashop.ordering.domain.model.entity.CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
+import static com.diogomendes.algashop.ordering.domain.model.customer.CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
 import static com.diogomendes.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder.aCustomer;
 import static com.diogomendes.algashop.ordering.infrastructure.persistence.entity.ShoppingCartPersistenceEntityTestDataBuilder.existingShoppingCart;
 import static org.assertj.core.api.Assertions.assertThat;

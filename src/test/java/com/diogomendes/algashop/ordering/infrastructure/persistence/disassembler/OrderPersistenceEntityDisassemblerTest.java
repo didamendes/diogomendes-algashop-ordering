@@ -1,14 +1,15 @@
 package com.diogomendes.algashop.ordering.infrastructure.persistence.disassembler;
 
-import com.diogomendes.algashop.ordering.domain.model.entity.Order;
-import com.diogomendes.algashop.ordering.domain.model.entity.OrderStatus;
-import com.diogomendes.algashop.ordering.domain.model.entity.PaymentMethod;
-import com.diogomendes.algashop.ordering.domain.model.valueobject.Money;
-import com.diogomendes.algashop.ordering.domain.model.valueobject.Quantity;
-import com.diogomendes.algashop.ordering.domain.model.valueobject.id.CustomerId;
-import com.diogomendes.algashop.ordering.domain.model.valueobject.id.OrderId;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
+import com.diogomendes.algashop.ordering.domain.model.order.Order;
+import com.diogomendes.algashop.ordering.domain.model.order.OrderStatus;
+import com.diogomendes.algashop.ordering.domain.model.order.PaymentMethod;
+import com.diogomendes.algashop.ordering.domain.model.commons.Money;
+import com.diogomendes.algashop.ordering.domain.model.commons.Quantity;
+import com.diogomendes.algashop.ordering.domain.model.customer.CustomerId;
+import com.diogomendes.algashop.ordering.domain.model.order.OrderId;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntity;
 import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntityTestDataBuilder;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntityDisassembler;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

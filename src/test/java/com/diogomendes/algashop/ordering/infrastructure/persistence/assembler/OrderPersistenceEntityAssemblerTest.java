@@ -1,19 +1,18 @@
 package com.diogomendes.algashop.ordering.infrastructure.persistence.assembler;
 
-import com.diogomendes.algashop.ordering.domain.model.entity.Order;
-import com.diogomendes.algashop.ordering.domain.model.entity.OrderTestDataBuilder;
-import com.diogomendes.algashop.ordering.domain.model.valueobject.id.OrderItemId;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
+import com.diogomendes.algashop.ordering.domain.model.order.Order;
+import com.diogomendes.algashop.ordering.domain.model.order.OrderTestDataBuilder;
+import com.diogomendes.algashop.ordering.domain.model.order.OrderItemId;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.order.OrderItemPersistenceEntity;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntity;
 import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntityTestDataBuilder;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.repository.CustomerPersistenceEntityRepository;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntityAssembler;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.customer.CustomerPersistenceEntityRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashSet;

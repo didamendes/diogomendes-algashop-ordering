@@ -1,15 +1,16 @@
 package com.diogomendes.algashop.ordering.infrastructure.persistence.provider;
 
-import com.diogomendes.algashop.ordering.domain.model.entity.Order;
-import com.diogomendes.algashop.ordering.domain.model.entity.OrderStatus;
-import com.diogomendes.algashop.ordering.domain.model.entity.OrderTestDataBuilder;
-import com.diogomendes.algashop.ordering.domain.model.repository.Customers;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.assembler.CustomerPersistenceEntityAssembler;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.assembler.OrderPersistenceEntityAssembler;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.config.SpringDataAuditingConfig;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.disassembler.CustomerPersistenceEntityDisassembler;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.disassembler.OrderPersistenceEntityDisassembler;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.repository.OrderPersistenceEntityRepository;
+import com.diogomendes.algashop.ordering.domain.model.order.Order;
+import com.diogomendes.algashop.ordering.domain.model.order.OrderStatus;
+import com.diogomendes.algashop.ordering.domain.model.order.OrderTestDataBuilder;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.customer.CustomerPersistenceEntityAssembler;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.customer.CustomersPersistenceProvider;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntityAssembler;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.SpringDataAuditingConfig;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.customer.CustomerPersistenceEntityDisassembler;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntityDisassembler;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntityRepository;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.order.OrdersPersistenceProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.diogomendes.algashop.ordering.domain.model.entity.CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
-import static com.diogomendes.algashop.ordering.domain.model.entity.CustomerTestDataBuilder.existingCustomer;
+import static com.diogomendes.algashop.ordering.domain.model.customer.CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
+import static com.diogomendes.algashop.ordering.domain.model.customer.CustomerTestDataBuilder.existingCustomer;
 import static org.assertj.core.api.Assertions.*;
 
-import static com.diogomendes.algashop.ordering.domain.model.entity.OrderStatus.PLACED;
+import static com.diogomendes.algashop.ordering.domain.model.order.OrderStatus.PLACED;
 import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
 @DataJpaTest

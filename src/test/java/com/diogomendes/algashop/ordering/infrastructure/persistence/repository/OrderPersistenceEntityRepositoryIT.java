@@ -1,9 +1,11 @@
 package com.diogomendes.algashop.ordering.infrastructure.persistence.repository;
 
-import com.diogomendes.algashop.ordering.infrastructure.persistence.config.SpringDataAuditingConfig;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntity;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.SpringDataAuditingConfig;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.customer.CustomerPersistenceEntity;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.customer.CustomerPersistenceEntityRepository;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntity;
 import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntityTestDataBuilder;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntityRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +15,7 @@ import org.springframework.context.annotation.Import;
 
 import java.util.UUID;
 
-import static com.diogomendes.algashop.ordering.domain.model.entity.CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
+import static com.diogomendes.algashop.ordering.domain.model.customer.CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
 import static com.diogomendes.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder.aCustomer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;

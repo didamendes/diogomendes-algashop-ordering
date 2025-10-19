@@ -1,9 +1,10 @@
 package com.diogomendes.algashop.ordering.infrastructure.persistence.entity;
 
-import com.diogomendes.algashop.ordering.infrastructure.persistence.embeddable.AddressEmbeddable;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntity.CustomerPersistenceEntityBuilder;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.commons.AddressEmbeddable;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.customer.CustomerPersistenceEntity;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.customer.CustomerPersistenceEntity.CustomerPersistenceEntityBuilder;
 
-import static com.diogomendes.algashop.ordering.domain.model.entity.CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
+import static com.diogomendes.algashop.ordering.domain.model.customer.CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
 import static java.time.LocalDate.of;
 import static java.time.OffsetDateTime.now;
 

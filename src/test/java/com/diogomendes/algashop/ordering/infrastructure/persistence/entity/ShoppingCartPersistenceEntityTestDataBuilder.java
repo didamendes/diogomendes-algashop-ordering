@@ -1,11 +1,13 @@
 package com.diogomendes.algashop.ordering.infrastructure.persistence.entity;
 
-import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.ShoppingCartItemPersistenceEntity.ShoppingCartItemPersistenceEntityBuilder;
-import com.diogomendes.algashop.ordering.infrastructure.persistence.entity.ShoppingCartPersistenceEntity.ShoppingCartPersistenceEntityBuilder;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.shoppingcart.ShoppingCartItemPersistenceEntity;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.shoppingcart.ShoppingCartItemPersistenceEntity.ShoppingCartItemPersistenceEntityBuilder;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.shoppingcart.ShoppingCartPersistenceEntity;
+import com.diogomendes.algashop.ordering.infrastructure.persistence.shoppingcart.ShoppingCartPersistenceEntity.ShoppingCartPersistenceEntityBuilder;
 
 import java.math.BigDecimal;
 
-import static com.diogomendes.algashop.ordering.domain.model.utility.IdGenerator.generateTimeBasedUUID;
+import static com.diogomendes.algashop.ordering.domain.model.IdGenerator.generateTimeBasedUUID;
 import static com.diogomendes.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder.aCustomer;
 import static java.time.OffsetDateTime.now;
 import static java.util.Set.of;
