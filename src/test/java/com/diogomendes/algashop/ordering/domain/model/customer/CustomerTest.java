@@ -38,7 +38,7 @@ public class CustomerTest {
             c -> assertThat(c.phone()).isEqualTo(new Phone("000-000-0000")),
             c -> assertThat(c.document()).isEqualTo(new Document("000-00-0000")),
             c -> assertThat(c.birthDate()).isNull(),
-            c -> assertThat(c.promotionNotificationsAllowed()).isFalse(),
+            c -> assertThat(c.isPromotionNotificationsAllowed()).isFalse(),
             c -> assertThat(c.address()).isEqualTo(
                 Address.builder()
                     .street("Bourbon Street")

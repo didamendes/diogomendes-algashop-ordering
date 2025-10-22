@@ -21,8 +21,8 @@ public class CustomerPersistenceEntityAssembler {
         customerPersistenceEntity.setEmail(customer.email().value());
         customerPersistenceEntity.setPhone(customer.phone().value());
         customerPersistenceEntity.setDocument(customer.document().value());
-        customerPersistenceEntity.setPromotionNotificationsAllowed(customer.promotionNotificationsAllowed());
-        customerPersistenceEntity.setArchived(customer.archived());
+        customerPersistenceEntity.setPromotionNotificationsAllowed(customer.isPromotionNotificationsAllowed());
+        customerPersistenceEntity.setArchived(customer.isArchived());
         customerPersistenceEntity.setRegisteredAt(customer.registeredAt());
         customerPersistenceEntity.setArchivedAt(customer.archivedAt());
         customerPersistenceEntity.setLoyaltyPoints(customer.loyaltyPoints().value());

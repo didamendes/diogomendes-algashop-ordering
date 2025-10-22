@@ -141,11 +141,11 @@ public class Customer implements AggregateRoot<CustomerId> {
         return document;
     }
 
-    public Boolean promotionNotificationsAllowed() {
+    public Boolean isPromotionNotificationsAllowed() {
         return promotionNotificationsAllowed;
     }
 
-    public Boolean archived() {
+    public Boolean isArchived() {
         return archived;
     }
 
@@ -225,7 +225,7 @@ public class Customer implements AggregateRoot<CustomerId> {
     }
 
     private void verifyIfChangeable() {
-        if (this.archived()) {
+        if (this.isArchived()) {
             throw new CustomerArchivedException();
         }
     }
