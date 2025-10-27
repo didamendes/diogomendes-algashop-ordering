@@ -1,17 +1,29 @@
 package com.diogomendes.algashop.ordering.application.customer.management;
 
+import com.diogomendes.algashop.ordering.application.customer.notification.CustomerNotificationApplicationService;
+import com.diogomendes.algashop.ordering.application.customer.notification.CustomerNotificationApplicationService.NotifyNewRegistrationInput;
+import com.diogomendes.algashop.ordering.application.customer.query.CustomerOutput;
+import com.diogomendes.algashop.ordering.application.customer.query.CustomerQueryService;
+import com.diogomendes.algashop.ordering.domain.model.customer.CustomerArchivedEvent;
 import com.diogomendes.algashop.ordering.domain.model.customer.CustomerArchivedException;
 import com.diogomendes.algashop.ordering.domain.model.customer.CustomerNotFoundException;
+import com.diogomendes.algashop.ordering.domain.model.customer.CustomerRegisteredEvent;
 import com.diogomendes.algashop.ordering.domain.model.product.ProductCatalogService;
+import com.diogomendes.algashop.ordering.infrastructure.listener.customer.CustomerEventListener;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.UUID;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @Transactional
@@ -23,6 +35,15 @@ class CustomerManagementApplicationServiceIT {
     @MockitoBean
     private ProductCatalogService productCatalogService;
 
+    @MockitoSpyBean
+    private CustomerEventListener customerEventListener;
+
+    @MockitoSpyBean
+    private CustomerNotificationApplicationService customerNotificationService;
+
+    @Autowired
+    private CustomerQueryService customerQueryService;
+
     @Test
     public void shouldRegister() {
         CustomerInput input = CustomerInputTestDataBuilder.aCustomer().build();
@@ -30,7 +51,7 @@ class CustomerManagementApplicationServiceIT {
         UUID customerId = customerManagementApplicationService.create(input);
         Assertions.assertThat(customerId).isNotNull();
 
-        CustomerOutput customerOutput = customerManagementApplicationService.findById(customerId);
+        CustomerOutput customerOutput = customerQueryService.findById(customerId);
 
         Assertions.assertThat(customerOutput)
                 .extracting(
@@ -48,6 +69,10 @@ class CustomerManagementApplicationServiceIT {
                 );
 
         Assertions.assertThat(customerOutput.getRegisteredAt()).isNotNull();
+
+        verify(customerEventListener).listen(any(CustomerRegisteredEvent.class));
+        verify(customerNotificationService).notifyNewRegistration(any(NotifyNewRegistrationInput.class));
+        verify(customerEventListener, never()).listen(any(CustomerArchivedEvent.class));
     }
 
     @Test
@@ -60,7 +85,7 @@ class CustomerManagementApplicationServiceIT {
 
         customerManagementApplicationService.update(customerId, updateInput);
 
-        CustomerOutput customerOutput = customerManagementApplicationService.findById(customerId);
+        CustomerOutput customerOutput = customerQueryService.findById(customerId);
 
         Assertions.assertThat(customerOutput)
                 .extracting(
@@ -88,7 +113,7 @@ class CustomerManagementApplicationServiceIT {
 
         customerManagementApplicationService.archive(customerId);
 
-        CustomerOutput archivedCustomer = customerManagementApplicationService.findById(customerId);
+        CustomerOutput archivedCustomer = customerQueryService.findById(customerId);
 
         Assertions.assertThat(archivedCustomer)
                 .isNotNull()

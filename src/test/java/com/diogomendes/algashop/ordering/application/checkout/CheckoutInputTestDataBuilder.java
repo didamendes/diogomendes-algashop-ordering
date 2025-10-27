@@ -2,6 +2,8 @@ package com.diogomendes.algashop.ordering.application.checkout;
 
 import com.diogomendes.algashop.ordering.application.checkout.CheckoutInput.CheckoutInputBuilder;
 import com.diogomendes.algashop.ordering.application.commons.AddressData;
+import com.diogomendes.algashop.ordering.application.order.query.BillingData;
+import com.diogomendes.algashop.ordering.application.order.query.RecipientData;
 
 import java.util.UUID;
 

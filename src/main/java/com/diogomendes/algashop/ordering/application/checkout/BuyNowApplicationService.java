@@ -2,7 +2,10 @@ package com.diogomendes.algashop.ordering.application.checkout;
 
 import com.diogomendes.algashop.ordering.domain.model.commons.Quantity;
 import com.diogomendes.algashop.ordering.domain.model.commons.ZipCode;
+import com.diogomendes.algashop.ordering.domain.model.customer.Customer;
 import com.diogomendes.algashop.ordering.domain.model.customer.CustomerId;
+import com.diogomendes.algashop.ordering.domain.model.customer.CustomerNotFoundException;
+import com.diogomendes.algashop.ordering.domain.model.customer.Customers;
 import com.diogomendes.algashop.ordering.domain.model.order.*;
 import com.diogomendes.algashop.ordering.domain.model.order.shipping.OriginAddressService;
 import com.diogomendes.algashop.ordering.domain.model.order.shipping.ShippingCostService;
@@ -29,6 +32,7 @@ public class BuyNowApplicationService {
     private final OriginAddressService originAddressService;
 
     private final Orders orders;
+    private final Customers customers;
 
     private final ShippingInputDisassembler shippingInputDisassembler;
     private final BillingInputDisassembler billingInputDisassembler;
@@ -40,6 +44,7 @@ public class BuyNowApplicationService {
         Quantity quantity = new Quantity(input.getQuantity());
         CustomerId customerId = new CustomerId(input.getCustomerId());
         PaymentMethod paymentMethod = PaymentMethod.valueOf(input.getPaymentMethod());
+        Customer customer = customers.ofId(customerId).orElseThrow(CustomerNotFoundException::new);
 
         Product product = findProduct(new ProductId(input.getProductId()));
         var shippingCalculationResult = calculateShippingCost(input.getShipping());
@@ -49,7 +54,7 @@ public class BuyNowApplicationService {
 
         Order order = buyNowService.buyNow(
                 product,
-                customerId,
+                customer,
                 billing,
                 shipping,
                 quantity,

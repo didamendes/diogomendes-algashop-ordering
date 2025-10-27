@@ -1,7 +1,6 @@
 package com.diogomendes.algashop.ordering.application.customer.management;
 
 import com.diogomendes.algashop.ordering.application.commons.AddressData;
-import com.diogomendes.algashop.ordering.application.utility.Mapper;
 import com.diogomendes.algashop.ordering.domain.model.commons.*;
 import com.diogomendes.algashop.ordering.domain.model.customer.*;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,6 @@ import static java.util.Objects.requireNonNull;
 public class CustomerManagementApplicationService {
 
     private final Customers customers;
-    private final Mapper mapper;
     private final CustomerRegistrationService customerRegistrationService;
 
     @Transactional
@@ -47,16 +45,6 @@ public class CustomerManagementApplicationService {
         customers.add(customer);
 
         return customer.id().value();
-    }
-
-    @Transactional(readOnly = true)
-    public CustomerOutput findById(UUID customerId) {
-        requireNonNull(customerId);
-
-        Customer customer = customers.ofId(new CustomerId(customerId))
-                .orElseThrow(CustomerNotFoundException::new);
-
-        return mapper.convert(customer, CustomerOutput.class);
     }
 
     @Transactional

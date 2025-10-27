@@ -1,5 +1,6 @@
 package com.diogomendes.algashop.ordering.domain.model.customer;
 
+import com.diogomendes.algashop.ordering.domain.model.AbstractEventSourceEntity;
 import com.diogomendes.algashop.ordering.domain.model.AggregateRoot;
 import com.diogomendes.algashop.ordering.domain.model.commons.*;
 import lombok.Builder;
@@ -12,7 +13,9 @@ import static com.diogomendes.algashop.ordering.domain.model.ErrorMessages.*;
 import static com.diogomendes.algashop.ordering.domain.model.customer.LoyaltyPoints.ZERO;
 import static java.util.Objects.requireNonNull;
 
-public class Customer implements AggregateRoot<CustomerId> {
+public class Customer
+        extends AbstractEventSourceEntity
+        implements AggregateRoot<CustomerId> {
     private CustomerId id;
     private FullName fullName;
     private BirthDate birthDate;
@@ -30,7 +33,7 @@ public class Customer implements AggregateRoot<CustomerId> {
     @Builder(builderClassName = "BrandNewCustomerBuilder", builderMethodName = "brandNew")
     private static Customer createBrandNew(FullName fullName, BirthDate birthDate, Email email, Phone phone,
                                     Document document, Boolean promotionNotificationsAllowed, Address address) {
-        return  new Customer(new CustomerId(),
+        Customer customer = new Customer(new CustomerId(),
                 fullName,
                 birthDate,
                 email,
@@ -43,7 +46,11 @@ public class Customer implements AggregateRoot<CustomerId> {
                 new LoyaltyPoints(0),
                 address,
                 null
-                );
+        );
+
+        customer.publishDomainEvent(new CustomerRegisteredEvent(customer.id(), customer.registeredAt(),
+                customer.fullName(), customer.email()));
+        return customer;
     }
 
     @Builder(builderClassName = "ExistingCustomerBuilder", builderMethodName = "existing")
@@ -85,6 +92,8 @@ public class Customer implements AggregateRoot<CustomerId> {
         this.setBirthDate(null);
         this.setPromotionNotificationsAllowed(false);
         this.setAddress(this.address.toBuilder().number("Anonymized").complement(null).build());
+
+        this.publishDomainEvent(new CustomerArchivedEvent(this.id(), this.archivedAt()));
     }
 
     public void enablePromotionNotifications() {

@@ -30,6 +30,8 @@ public class ShoppingCartPersistenceEntityAssembler {
         persistenceEntity.setCustomer(customerPersistenceEntityRepository
                 .getReferenceById(shoppingCart.customerId().value()));
 
+        persistenceEntity.addEvents(shoppingCart.domainEvents());
+
         return persistenceEntity;
     }
 

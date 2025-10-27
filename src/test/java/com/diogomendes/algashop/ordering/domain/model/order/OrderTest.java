@@ -139,10 +139,13 @@ class OrderTest {
     public void givenDraftOrder_whenChangeShipping_shouldAllowChange() {
         Shipping shipping = OrderTestDataBuilder.aShipping();
         Order order = Order.draft(new CustomerId());
+        Money expectedTotalAmount = order.totalAmount().add(shipping.cost());
 
         order.changeShipping(shipping);
 
-        assertWith(order, o -> assertThat(o.shipping()).isEqualTo(shipping));
+        assertWith(order,
+                o -> assertThat(o.shipping()).isEqualTo(shipping),
+                o -> assertThat(o.totalAmount()).isEqualTo(expectedTotalAmount));
     }
 
     @Test

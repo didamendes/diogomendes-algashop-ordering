@@ -1,6 +1,8 @@
 package com.diogomendes.algashop.ordering.application.checkout;
 
 import com.diogomendes.algashop.ordering.application.commons.AddressData;
+import com.diogomendes.algashop.ordering.application.order.query.BillingData;
+import com.diogomendes.algashop.ordering.application.order.query.RecipientData;
 
 import static com.diogomendes.algashop.ordering.domain.model.customer.CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
 import static com.diogomendes.algashop.ordering.domain.model.product.ProductTestDataBuilder.DEFAULT_PRODUCT_ID;

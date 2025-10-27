@@ -4,7 +4,9 @@ import com.diogomendes.algashop.ordering.domain.model.commons.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static com.diogomendes.algashop.ordering.domain.model.customer.CustomerTestDataBuilder.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CustomerTest {
 
@@ -12,13 +14,13 @@ public class CustomerTest {
     void given_invalidEmail_whenTryCreateCustomer_shouldGenerateException() {
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> {
-                CustomerTestDataBuilder.brandNewCustomer().email(new Email("invalid")).build();
+                brandNewCustomer().email(new Email("invalid")).build();
             });
     }
 
     @Test
     void given_invalidEmail_whenTryUpdatedCustomerEmail_shouldGenerateException() {
-        Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
+        Customer customer = brandNewCustomer().build();
 
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> {
@@ -28,7 +30,7 @@ public class CustomerTest {
 
     @Test
     void given_unarchivedCustomer_whenArchive_shouldAnonymize() {
-        Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
+        Customer customer = brandNewCustomer().build();
 
         customer.archive();
 
@@ -55,7 +57,7 @@ public class CustomerTest {
 
     @Test
     void given_archivedCustomer_whenTryToUpdate_shouldGenerateException() {
-        Customer customer = CustomerTestDataBuilder.existingCustomerBuilder().build();
+        Customer customer = existingCustomerBuilder().build();
 
         Assertions.assertThatExceptionOfType(CustomerArchivedException.class)
                 .isThrownBy(customer::archive);
@@ -75,23 +77,41 @@ public class CustomerTest {
 
     @Test
     void given_brandNewCustomer_whenAddLoyaltyPoints_shouldSumPoints() {
-        Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
+        Customer customer = brandNewCustomer().build();
 
         customer.addLoyaltyPoints(new LoyaltyPoints(10));
         customer.addLoyaltyPoints(new LoyaltyPoints(20));
 
-        Assertions.assertThat(customer.loyaltyPoints()).isEqualTo(new LoyaltyPoints(30));
+        assertThat(customer.loyaltyPoints()).isEqualTo(new LoyaltyPoints(30));
     }
 
     @Test
     void given_brandNewCustomer_whenAddInvalidLoyaltyPoints_shouldGenerateException() {
-        Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
+        Customer customer = brandNewCustomer().build();
 
         Assertions.assertThatNoException()
                 .isThrownBy(() -> customer.addLoyaltyPoints(new LoyaltyPoints(0)));
 
         Assertions.assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> customer.addLoyaltyPoints(new LoyaltyPoints(-10)));
+    }
+
+    @Test
+    void givenValidData_whenCreateBrandNewCustomer_shouldGenerateCustomerRegisteredEvent() {
+        Customer customer = brandNewCustomer().build();
+        CustomerRegisteredEvent customerRegisteredEvent = new CustomerRegisteredEvent(customer.id(), customer.registeredAt(),
+                customer.fullName(), customer.email());
+
+        assertThat(customer.domainEvents()).contains(customerRegisteredEvent);
+    }
+
+    @Test
+    void givenUnarchivedCustomer_whenArchive_shouldGenerateCustomerArchivedEvent() {
+        Customer customer = existingCustomer().archived(false).archivedAt(null).build();
+        customer.archive();
+        CustomerArchivedEvent customerArchivedEvent = new CustomerArchivedEvent(customer.id(), customer.archivedAt());
+
+        assertThat(customer.domainEvents()).contains(customerArchivedEvent);
     }
 
 }

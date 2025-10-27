@@ -1,5 +1,6 @@
 package com.diogomendes.algashop.ordering.domain.model.order;
 
+import com.diogomendes.algashop.ordering.domain.model.AbstractEventSourceEntity;
 import com.diogomendes.algashop.ordering.domain.model.AggregateRoot;
 import com.diogomendes.algashop.ordering.domain.model.commons.Money;
 import com.diogomendes.algashop.ordering.domain.model.commons.Quantity;
@@ -21,7 +22,9 @@ import static java.math.BigDecimal.ZERO;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 
-public class Order implements AggregateRoot<OrderId> {
+public class Order
+        extends AbstractEventSourceEntity
+        implements AggregateRoot<OrderId> {
 
     private OrderId id;
     private CustomerId customerId;
@@ -110,16 +113,25 @@ public class Order implements AggregateRoot<OrderId> {
         this.verifyIfCanChangeToPlaced();
         this.setPlacedAt(OffsetDateTime.now());
         this.changeStatus(PLACED);
+        publishDomainEvent(new OrderPlacedEvent(this.id(), this.customerId(), this.placedAt()));
     }
 
     public void markAsPaid() {
         this.setPaidAt(OffsetDateTime.now());
         this.changeStatus(PAID);
+        publishDomainEvent(new OrderPaidEvent(this.id(), this.customerId(), this.paidAt()));
     }
 
     public void markAsReady() {
         this.changeStatus(READY);
         this.setReadyAt(OffsetDateTime.now());
+        publishDomainEvent(new OrderReadyEvent(this.id(), this.customerId(), this.readyAt()));
+    }
+
+    public void cancel() {
+        this.changeStatus(CANCELED);
+        this.setCanceledAt(OffsetDateTime.now());
+        publishDomainEvent(new OrderCanceledEvent(this.id(), this.customerId(), this.canceledAt()));
     }
 
     public void changePaymentMethod(PaymentMethod paymentMethod) {
@@ -166,11 +178,6 @@ public class Order implements AggregateRoot<OrderId> {
         this.items.remove(orderItem);
 
         recalculateTotals();
-    }
-
-    public void cancel() {
-        this.changeStatus(CANCELED);
-        this.setCanceledAt(OffsetDateTime.now());
     }
 
     public boolean isDraft() {

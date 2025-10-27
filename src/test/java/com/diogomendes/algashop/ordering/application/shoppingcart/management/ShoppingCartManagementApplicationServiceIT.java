@@ -4,10 +4,12 @@ import com.diogomendes.algashop.ordering.domain.model.commons.Quantity;
 import com.diogomendes.algashop.ordering.domain.model.customer.*;
 import com.diogomendes.algashop.ordering.domain.model.product.*;
 import com.diogomendes.algashop.ordering.domain.model.shoppingcart.*;
+import com.diogomendes.algashop.ordering.infrastructure.listener.shoppingcart.ShoppingCartEventListener;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -21,6 +23,7 @@ import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -39,6 +42,9 @@ class ShoppingCartManagementApplicationServiceIT {
     @MockitoBean
     private ProductCatalogService productCatalogService;
 
+    @MockitoSpyBean
+    private ShoppingCartEventListener shoppingCartEventListener;
+
     @Test
     void shouldCreateNewShoppingCartForExistingCustomer() {
         Customer customer = brandNewCustomer().build();
@@ -51,6 +57,8 @@ class ShoppingCartManagementApplicationServiceIT {
         assertThat(createdCart).isPresent();
         assertThat(createdCart.get().customerId().value()).isEqualTo(customer.id().value());
         assertThat(createdCart.get().isEmpty()).isTrue();
+
+        verify(shoppingCartEventListener).listen(any(ShoppingCartCreatedEvent.class));
     }
 
     @Test
@@ -94,6 +102,8 @@ class ShoppingCartManagementApplicationServiceIT {
         assertThat(updatedCart.items()).hasSize(1);
         assertThat(updatedCart.items().iterator().next().productId()).isEqualTo(product.id());
         assertThat(updatedCart.items().iterator().next().quantity().value()).isEqualTo(2);
+
+        verify(shoppingCartEventListener).listen(any(ShoppingCartItemAddedEvent.class));
     }
 
     @Test
@@ -166,6 +176,8 @@ class ShoppingCartManagementApplicationServiceIT {
 
         ShoppingCart updateCart = shoppingCarts.ofId(shoppingCart.id()).orElseThrow();
         assertThat(updateCart.items()).isEmpty();
+
+        verify(shoppingCartEventListener).listen(any(ShoppingCartItemRemovedEvent.class));
     }
 
     @Test
@@ -203,6 +215,8 @@ class ShoppingCartManagementApplicationServiceIT {
 
         ShoppingCart updateCart = shoppingCarts.ofId(shoppingCart.id()).orElseThrow();
         assertThat(updateCart.isEmpty()).isTrue();
+
+        verify(shoppingCartEventListener).listen(any(ShoppingCartEmptiedEvent.class));
     }
 
     @Test
